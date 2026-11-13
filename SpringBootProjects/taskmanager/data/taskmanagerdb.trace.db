@@ -1,0 +1,5 @@
+2026-11-09 15:20:48.447045+07:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT *\000d\000aFROM TASKS\000d\000aWHERE TITLE =[*]"; expected "ALL (, ANY (, SOME ("; SQL statement:
+SELECT *
+FROM TASKS
+WHERE TITLE = [42001-240]
