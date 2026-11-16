@@ -1,7 +1,9 @@
 package com.example.employee_management.controller;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import com.example.employee_management.dto.CreateEmployeeRequest;
 import com.example.employee_management.dto.EmployeeResponse;
+import com.example.employee_management.exception.RequestValidationException;
 import com.example.employee_management.service.EmployeeService;
 
 @RestController
@@ -42,7 +47,10 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody CreateEmployeeRequest request) {
+    public ResponseEntity<EmployeeResponse> createEmployee(
+            @Valid @RequestBody CreateEmployeeRequest request,
+            BindingResult bindingResult) {
+        rejectInvalidRequest(bindingResult);
         EmployeeResponse employee = employeeService.createEmployee(request);
         URI location = URI.create("/api/employees/" + employee.id());
         return ResponseEntity.created(location).body(employee);
@@ -51,7 +59,9 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable Long id,
-            @Valid @RequestBody CreateEmployeeRequest request) {
+            @Valid @RequestBody CreateEmployeeRequest request,
+            BindingResult bindingResult) {
+        rejectInvalidRequest(bindingResult);
         return ResponseEntity.ok(employeeService.updateEmployee(id, request));
     }
 
@@ -59,5 +69,18 @@ public class EmployeeController {
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private void rejectInvalidRequest(BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) {
+            return;
+        }
+
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors()) {
+            String message = error.getDefaultMessage() == null ? "Invalid value" : error.getDefaultMessage();
+            fieldErrors.putIfAbsent(error.getField(), message);
+        }
+        throw new RequestValidationException(fieldErrors);
     }
 }
