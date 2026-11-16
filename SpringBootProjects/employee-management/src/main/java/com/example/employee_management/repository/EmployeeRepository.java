@@ -2,34 +2,31 @@ package com.example.employee_management.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentSkipListMap;
 
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.employee_management.model.Employee;
 
 @Repository
-public class EmployeeRepository {
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    private final ConcurrentSkipListMap<String, Employee> employees = new ConcurrentSkipListMap<>();
+    @EntityGraph(attributePaths = "department")
+    @Query("select e from Employee e")
+    List<Employee> findAllWithDepartment();
 
-    public Employee save(Employee employee) {
-        employees.put(employee.id(), employee);
-        return employee;
-    }
+    @EntityGraph(attributePaths = "department")
+    List<Employee> findByNameContainingIgnoreCase(String name);
 
-    public List<Employee> findAll() {
-        return List.copyOf(employees.values());
-    }
+    @EntityGraph(attributePaths = "department")
+    List<Employee> findByDepartment_Id(Long departmentId);
 
-    public Optional<Employee> findById(String id) {
-        return Optional.ofNullable(employees.get(id));
-    }
+    @EntityGraph(attributePaths = "department")
+    List<Employee> findByNameContainingIgnoreCaseAndDepartment_Id(String name, Long departmentId);
 
-    public List<Employee> findByNameContainingIgnoreCase(String name) {
-        String normalizedName = name.toLowerCase(java.util.Locale.ROOT);
-        return employees.values().stream()
-                .filter(employee -> employee.name().toLowerCase(java.util.Locale.ROOT).contains(normalizedName))
-                .toList();
-    }
+    @Query("select e from Employee e join fetch e.department where e.id = :id")
+    Optional<Employee> findByIdWithDepartment(@Param("id") Long id);
 }
