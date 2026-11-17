@@ -3,6 +3,8 @@ package com.example.employee_management.service;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import com.example.employee_management.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
@@ -59,7 +63,9 @@ public class EmployeeService {
         Department department = findDepartment(request.departmentId());
         Employee employee = new Employee(
                 request.name().trim(), normalizeEmail(request.email()), department);
-        return toResponse(employeeRepository.save(employee));
+        Employee savedEmployee = employeeRepository.save(employee);
+        LOGGER.info("Created employee id={} departmentId={}", savedEmployee.id(), department.id());
+        return toResponse(savedEmployee);
     }
 
     @Transactional
@@ -72,7 +78,9 @@ public class EmployeeService {
         Department department = findDepartment(request.departmentId());
         Employee updated = new Employee(
                 existing.id(), request.name().trim(), normalizeEmail(request.email()), department);
-        return toResponse(employeeRepository.save(updated));
+        Employee savedEmployee = employeeRepository.save(updated);
+        LOGGER.info("Updated employee id={} departmentId={}", savedEmployee.id(), department.id());
+        return toResponse(savedEmployee);
     }
 
     @Transactional
@@ -81,6 +89,7 @@ public class EmployeeService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
         }
         employeeRepository.deleteById(id);
+        LOGGER.info("Deleted employee id={}", id);
     }
 
     private Department findDepartment(Long id) {
