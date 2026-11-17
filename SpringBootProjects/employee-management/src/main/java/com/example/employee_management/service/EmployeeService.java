@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,7 @@ public class EmployeeService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "employee-count", key = "'total'")
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         if (request == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body is required");
@@ -69,6 +71,7 @@ public class EmployeeService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "employee-count", key = "'total'")
     public EmployeeResponse updateEmployee(Long id, CreateEmployeeRequest request) {
         if (request == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body is required");
@@ -84,6 +87,7 @@ public class EmployeeService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "employee-count", key = "'total'")
     public void deleteEmployee(Long id) {
         if (!employeeRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
