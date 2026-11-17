@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thêm nhân viên</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<main class="page-shell narrow-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Employee Management</p>
+            <h1>Thêm nhân viên</h1>
+            <p class="subtitle">Nhập thông tin nhân viên và chọn phòng ban.</p>
+        </div>
+        <a class="text-link" th:href="@{/employees/list}">← Danh sách</a>
+    </header>
+
+    <section class="card form-card">
+        <div class="notice" th:if="${#lists.isEmpty(departments)}">
+            Chưa có phòng ban. Tạo phòng ban trước qua <code>POST /api/departments</code>.
+        </div>
+        <form th:action="@{/employees/add}" th:object="${employeeForm}" method="post" novalidate>
+            <div class="form-field">
+                <label for="name">Họ tên</label>
+                <input id="name" type="text" th:field="*{name}" autocomplete="name" required>
+                <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Tên không hợp lệ</p>
+            </div>
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input id="email" type="email" th:field="*{email}" autocomplete="email" required>
+                <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email không hợp lệ</p>
+            </div>
+            <div class="form-field">
+                <label for="departmentId">Phòng ban</label>
+                <select id="departmentId" th:field="*{departmentId}" required>
+                    <option value="">Chọn phòng ban</option>
+                    <option th:each="department : ${departments}"
+                            th:value="${department.id}"
+                            th:text="${department.name}">Phòng ban</option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('departmentId')}" th:errors="*{departmentId}">Chọn phòng ban</p>
+            </div>
+            <div class="form-actions">
+                <a class="button button-secondary" th:href="@{/employees/list}">Hủy</a>
+                <button class="button" type="submit" th:disabled="${#lists.isEmpty(departments)}">Lưu nhân viên</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

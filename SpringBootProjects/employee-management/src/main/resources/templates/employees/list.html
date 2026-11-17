@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Danh sách nhân viên</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<main class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Employee Management</p>
+            <h1>Danh sách nhân viên</h1>
+            <p class="subtitle">Dữ liệu được đọc từ MySQL thông qua Spring Data JPA.</p>
+        </div>
+        <nav class="actions" aria-label="Điều hướng">
+            <a class="button button-secondary" th:href="@{/employees/search}">Tìm kiếm</a>
+            <a class="button" th:href="@{/employees/add}">Thêm nhân viên</a>
+        </nav>
+    </header>
+
+    <section class="card" aria-labelledby="employee-table-title">
+        <div class="section-heading">
+            <h2 id="employee-table-title">Nhân viên</h2>
+            <span class="count" th:text="|${#lists.size(employees)} kết quả|">0 kết quả</span>
+        </div>
+        <div class="table-wrap" th:if="${!#lists.isEmpty(employees)}">
+            <table>
+                <thead>
+                <tr><th>Mã</th><th>Họ tên</th><th>Email</th><th>Phòng ban</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="employee : ${employees}">
+                    <td class="id-cell" th:text="${employee.id}">1</td>
+                    <td class="name-cell" th:text="${employee.name}">Nguyen Van A</td>
+                    <td th:text="${employee.email}">a@example.com</td>
+                    <td th:text="${employee.departmentName}">Engineering</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(employees)}">
+            <h3>Chưa có nhân viên</h3>
+            <p>Thêm nhân viên đầu tiên để xem dữ liệu tại đây.</p>
+            <a th:href="@{/employees/add}">Thêm nhân viên</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>
