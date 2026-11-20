@@ -16,7 +16,8 @@
         </div>
         <nav class="actions" aria-label="Điều hướng">
             <a class="button button-secondary" th:href="@{/employees/search}">Tìm kiếm</a>
-            <a class="button" th:href="@{/employees/add}">Thêm nhân viên</a>
+            <a class="button button-secondary" th:if="${isAdmin}" th:href="@{/employees/statistics}">Thống kê</a>
+            <a class="button" th:if="${isAdmin}" th:href="@{/employees/add}">Thêm nhân viên</a>
         </nav>
     </header>
 
@@ -43,7 +44,8 @@
         <div class="empty-state" th:if="${#lists.isEmpty(employees)}">
             <h3>Chưa có nhân viên</h3>
             <p>Thêm nhân viên đầu tiên để xem dữ liệu tại đây.</p>
-            <a th:href="@{/employees/add}">Thêm nhân viên</a>
+            <a th:if="${isAdmin}" th:href="@{/employees/add}">Thêm nhân viên</a>
+            <span th:unless="${isAdmin}">Liên hệ ADMIN để thêm nhân viên.</span>
         </div>
     </section>
 </main>

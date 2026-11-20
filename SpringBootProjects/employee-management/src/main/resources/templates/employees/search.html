@@ -16,7 +16,8 @@
         </div>
         <nav class="actions" aria-label="Điều hướng">
             <a class="button button-secondary" th:href="@{/employees/list}">Danh sách</a>
-            <a class="button" th:href="@{/employees/add}">Thêm nhân viên</a>
+            <a class="button button-secondary" th:if="${isAdmin}" th:href="@{/employees/statistics}">Thống kê</a>
+            <a class="button" th:if="${isAdmin}" th:href="@{/employees/add}">Thêm nhân viên</a>
         </nav>
     </header>
 

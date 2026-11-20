@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.employee_management.dto.DepartmentEmployeeCountResponse;
 import com.example.employee_management.dto.EmployeeCountResponse;
 import com.example.employee_management.service.EmployeeReportService;
 
@@ -21,5 +22,10 @@ public class EmployeeReportController {
     @GetMapping("/count")
     public ResponseEntity<EmployeeCountResponse> totalEmployees() {
         return ResponseEntity.ok(new EmployeeCountResponse(employeeReportService.totalEmployees()));
+    }
+
+    @GetMapping("/by-department")
+    public ResponseEntity<java.util.List<DepartmentEmployeeCountResponse>> employeesByDepartment() {
+        return ResponseEntity.ok(employeeReportService.employeesByDepartment());
     }
 }

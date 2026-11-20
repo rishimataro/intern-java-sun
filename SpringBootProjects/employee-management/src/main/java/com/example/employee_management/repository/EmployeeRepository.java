@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.employee_management.dto.DepartmentEmployeeCountResponse;
 import com.example.employee_management.model.Employee;
 
 @Repository
@@ -29,4 +30,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("select e from Employee e join fetch e.department where e.id = :id")
     Optional<Employee> findByIdWithDepartment(@Param("id") Long id);
+
+    @Query("select count(e) from Employee e")
+    long countEmployeesForReport();
+
+    @Query("select new com.example.employee_management.dto.DepartmentEmployeeCountResponse(" +
+            "d.id, d.name, count(e)) " +
+            "from Department d left join Employee e on e.department = d " +
+            "group by d.id, d.name order by d.name")
+    List<DepartmentEmployeeCountResponse> countEmployeesByDepartment();
 }
